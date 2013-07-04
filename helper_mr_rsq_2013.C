@@ -62,15 +62,19 @@
   gStyle->SetNumberContours(NCont);
 
 
+  //SET UP THE CUTS AND HISTOGRAM LIMITS
+
+  TCut cut_gg = "PFMR>0";
+  TCut fullcut = "PFMR>110 && PFR^2>.05";
   Int_t min_mr = 110;
-  Int_t max_mr = 1000;
+  Int_t max_mr = 1500;
   Float_t min_rsq = .05;
   Float_t max_rsq = 1;
   Int_t nbins_mr = 40;
   Int_t nbins_rsq = 40;
 
   Int_t min_events  = 1;
-  Int_t max_events = 200;
+  Int_t max_events = 1000;
 
   TH2F * hist  = new TH2F("hist" ,"hist", nbins_mr,min_mr,max_mr,nbins_rsq,min_rsq,max_rsq);
   TH2F * hist2 = new TH2F("hist2","hist2",nbins_mr,min_mr,max_mr,nbins_rsq,min_rsq,max_rsq);
@@ -87,10 +91,10 @@
   TCut range3_t = "run > 166347 && run < 180252 && HLT_RANGE_3_T";
   TCut range3_f = "run > 166347 && run < 180252 && HLT_RANGE_3_F";*/
 
-  TCut cut_gg = "PFMR>0";
 
 
-  TCut fullcut = "PFMR>110 && PFR^2>.05";
+
+
 
   TCanvas c1;
 

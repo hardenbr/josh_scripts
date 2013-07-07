@@ -8,15 +8,22 @@ def build_cmd(num, dir):
     cmd += " " + dir + "/src/submit_" + num + ".src "
     return cmd
 
-if len(sys.argv) != 3:
-    print "Usage: python unfinish_DATA_v3 [DIR] [NUM_FILES]"
+if len(sys.argv) != 2:
+    print "Usage: python unfinish_DATA_v3 [DIR]"
     exit(1)
 
 dir = sys.argv[1]
-num_files = int(sys.argv[2])
 os.system("ls /raid3/jhardenbrook/" + dir + " > finished.temp")
+os.system("ls %s/src > src_files.temp" % dir)
 
 flist = open("finished.temp").readlines()
+srclist = open("src_files.temp").readlines()
+
+
+numfiles = len(srclist)
+
+print "NUMBER OF FILES %i" numfiles
+
 #current_dir = os.getcwd()
 done = map(lambda(x):x.rstrip("\n"),flist)
 

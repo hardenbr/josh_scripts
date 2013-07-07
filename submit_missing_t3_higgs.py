@@ -1,20 +1,20 @@
 import sys,os
 import josh_functions as josh
 
-def build_cmd(num, castor_dir):
-    cmd = "bsub -q 1nd -o Data7TeV/"
-    cmd += castor_dir + "/log/" + castor_dir + "_" + num + ".log "
-    cmd += "source /afs/cern.ch/user/h/hardenbr/scratch0/CMSSW_4_2_7/src/VecBosApp/Data7TeV/" + castor_dir + "/src/submit_" + num + ".src "
-    cmd += "-copyInput=Data7TeV_" + num
+def build_cmd(num, dir):
+    cmd = "qsub -q 1nd -o " + 
+    cmd += dir + "/log/"
+    cmd += " -e " + dir + "/log/"
+    cmd += " source /home/jhardenbrook/2013/RAZOR_DIPHOTON/HggApp_Razor/" + dir + "/src/submit_" + num + ".src "
     return cmd
 
 if len(sys.argv) != 3:
-    print "Usage: python unfinish_DATA_v3 [CASTOR_DIR] [NUM_FILES]"
+    print "Usage: python unfinish_DATA_v3 [DIR] [NUM_FILES]"
     exit(1)
 
-castor_dir = sys.argv[1]
+dir = sys.argv[1]
 num_files = int(sys.argv[2])
-os.system("ls $WSPACE/DATA/RA3/" + castor_dir + " > finished.temp")
+os.system("ls /raid3/jhardenbrook/" + dir + " > finished.temp")
 
 flist = open("finished.temp").readlines()
 #current_dir = os.getcwd()
@@ -26,7 +26,7 @@ for ii in range(num_files):
         if "_" + str(ii) + "."  in jj:
             doprint = False
     if doprint:
-        print build_cmd(str(ii), castor_dir) + ";sleep 2"
+        print build_cmd(str(ii), dir)
     
 
 os.system("rm finished.temp")

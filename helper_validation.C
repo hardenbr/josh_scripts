@@ -64,9 +64,11 @@ void helper_validation(){
 
 
   vector<TString> var_names;
+  vector<TString> save_names;
   vector<TString> var_titles;
 
   vector<TString> razor_var_names;
+  vector<TString> razor_save_names;
   vector<TString> razor_var_titles;
 
   vector<TString> razor_var_names_SS;
@@ -126,19 +128,13 @@ void helper_validation(){
 
   var_names.push_back("PhotonPFCiC.pt[0]");
   min_x.push_back(0.);
-  max_x.push_back(300.);
-  var_titles.push_back("Sub Leading Photon P_{t}");
-  isLog.push_back(true);
-
-  var_names.push_back("PhotonPFCiC.pt[0]");
-  min_x.push_back(0.);
-  max_x.push_back(300.);
+  max_x.push_back(500.);
   var_titles.push_back("Sub Leading Photon P_{t}");
   isLog.push_back(true);
 
   var_names.push_back("PhotonPFCiC.pt[1]");
   min_x.push_back(0);
-  max_x.push_back(300);
+  max_x.push_back(700);
   var_titles.push_back("Leading Photon P_{t}");
   isLog.push_back(true);
 
@@ -250,11 +246,23 @@ void helper_validation(){
   var_titles.push_back("#phi_{MET}");
   isLog.push_back(false);
 
+  var_names.push_back("CaloMET");
+  min_x.push_back(0);
+  max_x.push_back(100);
+  var_titles.push_back("CaloMET");
+  isLog.push_back(false);
+
+  var_names.push_back("CaloMETPhi");
+  min_x.push_back(-4);
+  max_x.push_back(4);
+  var_titles.push_back("Calo #phi_{MET}");
+  isLog.push_back(false);
+
   var_names.push_back("mPairPFCiC");
   min_x.push_back(0);
   max_x.push_back(600);
   var_titles.push_back("m_{#gamma#gamma}");
-  isLog.push_back(false);
+  isLog.push_back(true);
 
   // USUAL RAZOR VARIABLES
   razor_var_names.push_back("PFMR");
@@ -380,17 +388,17 @@ void helper_validation(){
   razor_var_names_OS.push_back("mHem2_OS");
   razor_var_titles_OS.push_back("M_{Hem2} OS [GeV]");
 
-
-
-    //canvas and histogram
-  TCanvas c1;
-  TH1F * temp_hist;
   //  TPaveText *pt = new TPaveText(.5,.53,.5,.5,"NDC");
   TPaveText *pt = new TPaveText();
   pt->AddText("CMS Preliminary #sqrt{s} = 8 TeV");
   pt->AddText("Run 2012D DoublePhoton");
   pt->AddText("#int L dt ~7 fb^{-1}");
   pt->SetFillColor(kWhite);
+
+  //canvas and histogram
+  TCanvas c1;
+  TH1F * temp_hist;
+
 
   //do the typical variables
   for(int ii = 0; ii < var_names.size(); ii++) {
@@ -407,10 +415,9 @@ void helper_validation(){
                    
     cout << draw_cmd << endl;
     HggOutput->Draw(draw_cmd,baseline);
-
     temp_hist->Draw();
     pt->Draw("same")
-    //set the axis and style
+      //    //set the axis and style
     gStyle->SetOptStat(1111);
     //    temp_hist.GetXaxis().SetTitle();
     //    temp_hist.GetXaxis().SetRange(min_x[ii],max_x[ii]);

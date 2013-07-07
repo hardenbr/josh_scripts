@@ -1,11 +1,11 @@
 import sys,os
-import josh_functions as josh
 
+wd = "/home/jhardenbrook/2013/RAZOR_DIPHOTON/HggApp_Razor"
+queue = "all.q@compute-2-4.local,all.q@compute-3-2.local,all.q@compute-3-7.local,all.q@compute-3-8.local"
 def build_cmd(num, dir):
-    cmd = "qsub -q 1nd -o " + 
-    cmd += dir + "/log/"
-    cmd += " -e " + dir + "/log/"
-    cmd += " source /home/jhardenbrook/2013/RAZOR_DIPHOTON/HggApp_Razor/" + dir + "/src/submit_" + num + ".src "
+    cmd = "qsub -o %s/%s/log" % (wd,dir)
+    cmd += " -e %s/%s/log/ -q %s" % (wd,dir,queue)
+    cmd += " " + dir + "/src/submit_" + num + ".src "
     return cmd
 
 if len(sys.argv) != 3:

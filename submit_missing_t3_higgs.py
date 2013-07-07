@@ -20,9 +20,9 @@ flist = open("finished.temp").readlines()
 srclist = open("src_files.temp").readlines()
 
 
-numfiles = len(srclist)
+num_files = len(srclist)
 
-print "NUMBER OF FILES %i" numfiles
+print "NUMBER OF FILES %i" %  num_files
 
 #current_dir = os.getcwd()
 done = map(lambda(x):x.rstrip("\n"),flist)

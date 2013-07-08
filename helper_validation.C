@@ -134,7 +134,7 @@ void helper_validation(){
 
   var_names.push_back("PhotonPFCiC.pt[1]");
   min_x.push_back(0);
-  max_x.push_back(700);
+  max_x.push_back(1500);
   var_titles.push_back("Leading Photon P_{t}");
   isLog.push_back(true);
 
@@ -199,38 +199,38 @@ void helper_validation(){
   isLog.push_back(true);
 
   var_names.push_back("PhotonPFCiC.dr03EcalIso[0]");
-  min_x.push_back(-2);
-  max_x.push_back(10);
+  min_x.push_back(-20);
+  max_x.push_back(20);
   var_titles.push_back("Sub Leading Photon Ecal Iso #Delta R=.03");
   isLog.push_back(true);
 
   var_names.push_back("PhotonPFCiC.dr03EcalIso[1]");
-  min_x.push_back(-2);
-  max_x.push_back(10);
+  min_x.push_back(-20);
+  max_x.push_back(20);
   var_titles.push_back("Leading Photon Ecal Iso #Delta R=.03");
   isLog.push_back(true);
 
   var_names.push_back("PhotonPFCiC.dr04HcalIso[0]");
-  min_x.push_back(-2);
-  max_x.push_back(13);
+  min_x.push_back(-20);
+  max_x.push_back(20);
   var_titles.push_back("Sub Leading Photon Hcal Iso #Delta R=.04");
   isLog.push_back(true);
 
   var_names.push_back("PhotonPFCiC.dr04HcalIso[1]");
-  min_x.push_back(-2);
-  max_x.push_back(13);
+  min_x.push_back(-20);
+  max_x.push_back(20);
   var_titles.push_back("Leading Photon Hcal Iso #Delta R=.04");
   isLog.push_back(true);
 
   var_names.push_back("PhotonPFCiC.dr03TrackIso[0]");
   min_x.push_back(-1);
-  max_x.push_back(1);
+  max_x.push_back(10);
   var_titles.push_back("Sub Leading Photon Track Iso #Delta R=.03");
   isLog.push_back(true);
 
   var_names.push_back("PhotonPFCiC.dr03TrackIso[1]");
   min_x.push_back(-1);
-  max_x.push_back(1);
+  max_x.push_back(10);
   var_titles.push_back("Leading Photon Track Iso #Delta R=.03");
   isLog.push_back(true);
 

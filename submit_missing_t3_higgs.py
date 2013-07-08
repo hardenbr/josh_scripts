@@ -37,3 +37,4 @@ for ii in range(num_files):
     
 
 os.system("rm finished.temp")
+os.system("rm src_files.temp")

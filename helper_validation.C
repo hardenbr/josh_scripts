@@ -93,7 +93,7 @@ void helper_validation(){
   vector<bool> razor_isLog;
 
   TCut baseline  = "PFMR > 0 && PFR^2 > 0" ;
-  int n_bins = 40;  
+  int n_bins = 30;  
 
   //add the variable names
   var_names.push_back("nJets");
@@ -102,39 +102,51 @@ void helper_validation(){
   var_titles.push_back("Number of Jets");
   isLog.push_back(true);
 
+  var_names.push_back("PhotonPFCiC.dr03PFChargedIso[0]");
+  min_x.push_back(-1.);
+  max_x.push_back(6.);
+  var_titles.push_back("Sub Leading Photon Charged Iso x 50 / E_{t}");
+  isLog.push_back(true);
+
+  var_names.push_back("PhotonPFCiC.dr03PFChargedIso[1]");
+  min_x.push_back(-1.);
+  max_x.push_back(6.);
+  var_titles.push_back("Leading Photon Charged Iso x 50 / E_{t}");
+  isLog.push_back(true);
+
   var_names.push_back("PhotonPFCiC.isosumBad[0]");
   min_x.push_back(-4.);
   max_x.push_back(15.);
-  var_titles.push_back("Sub Leading Photon Bad Isolation Sum [GeV]");
+  var_titles.push_back("Sub Leading Photon Bad Isolation Sum x 50 / E_{t}");
   isLog.push_back(true);
 
   var_names.push_back("PhotonPFCiC.isosumBad[1]");
   min_x.push_back(-4.);
   max_x.push_back(15.);
-  var_titles.push_back("Leading Photon Bad Isolation Sum [GeV]");
+  var_titles.push_back("Leading Photon Bad Isolation Sum x 50/ E_{t}");
   isLog.push_back(true);
 
   var_names.push_back("PhotonPFCiC.isosumGood[0]");
   min_x.push_back(-1.);
   max_x.push_back(7.);
-  var_titles.push_back("Sub Leading Photon Good Isolation Sum [GeV]");
+  var_titles.push_back("Sub Leading Photon Good Isolation Sum x 50 / E_{t}");
   isLog.push_back(true);
 
   var_names.push_back("PhotonPFCiC.isosumGood[1]");
   min_x.push_back(-1);
   max_x.push_back(7.);
-  var_titles.push_back("Leading Photon Good Isolation Sum [GeV]");
+  var_titles.push_back("Leading Photon Good Isolation Sum x 50 / E_{t}");
   isLog.push_back(true);
 
   var_names.push_back("PhotonPFCiC.pt[0]");
   min_x.push_back(0.);
-  max_x.push_back(500.);
+  max_x.push_back(200.);
   var_titles.push_back("Sub Leading Photon P_{t}");
   isLog.push_back(true);
 
   var_names.push_back("PhotonPFCiC.pt[1]");
   min_x.push_back(0);
-  max_x.push_back(1500);
+  max_x.push_back(800);
   var_titles.push_back("Leading Photon P_{t}");
   isLog.push_back(true);
 
@@ -151,26 +163,26 @@ void helper_validation(){
   isLog.push_back(false);
 
   var_names.push_back("PhotonPFCiC.phi[0]");
-  min_x.push_back(-3.15);
-  max_x.push_back(3.15);
+  min_x.push_back(-4);
+  max_x.push_back(4);
   var_titles.push_back("Sub Leading Photon #phi");
   isLog.push_back(false);
 
   var_names.push_back("PhotonPFCiC.phi[1]");
-  min_x.push_back(-3.15);
-  max_x.push_back(3.15);
+  min_x.push_back(-4);
+  max_x.push_back(4);
   var_titles.push_back("Leading Photon #phi");
   isLog.push_back(false);
 
   var_names.push_back("PhotonPFCiC.sieie[0]");
   min_x.push_back(0);
-  max_x.push_back(.015);
+  max_x.push_back(.03);
   var_titles.push_back("Sub Leading Photon #sigma_{i#eta i#eta}");
   isLog.push_back(false);
 
   var_names.push_back("PhotonPFCiC.sieie[1]");
   min_x.push_back(0);
-  max_x.push_back(.015);
+  max_x.push_back(.03);
   var_titles.push_back("Leading Photon #sigma_{ i#eta i#eta}");
   isLog.push_back(false);
 
@@ -188,13 +200,13 @@ void helper_validation(){
 
   var_names.push_back("PhotonPFCiC.HoverE[0]");
   min_x.push_back(0);
-  max_x.push_back(.1);
+  max_x.push_back(.9);
   var_titles.push_back("Sub Leading Photon H/E");
   isLog.push_back(true);
 
   var_names.push_back("PhotonPFCiC.HoverE[1]");
   min_x.push_back(0);
-  max_x.push_back(.1);
+  max_x.push_back(.9);
   var_titles.push_back("Leading Photon H/E");
   isLog.push_back(true);
 
@@ -260,34 +272,34 @@ void helper_validation(){
 
   var_names.push_back("mPairPFCiC");
   min_x.push_back(0);
-  max_x.push_back(600);
+  max_x.push_back(2000);
   var_titles.push_back("m_{#gamma#gamma}");
   isLog.push_back(true);
 
   // USUAL RAZOR VARIABLES
   razor_var_names.push_back("PFMR");
   razor_min_x.push_back(0);
-  razor_max_x.push_back(2000);
+  razor_max_x.push_back(3000);
   razor_var_titles.push_back("M_{R} [GeV]");
   razor_isLog.push_back(true);
 
   razor_var_names.push_back("PFR^2");
   razor_min_x.push_back(0);
-  razor_max_x.push_back(1.2);
+  razor_max_x.push_back(1.3);
   razor_var_titles.push_back("R^{2} [GeV]");
   razor_isLog.push_back(true);
 
   razor_var_names.push_back("ptHem1");
   razor_min_x.push_back(0);
-  razor_max_x.push_back(300);
+  razor_max_x.push_back(1000);
   razor_var_titles.push_back("p_{t} Hemisphere 1  [GeV]");
-  razor_isLog.push_back(false);
+  razor_isLog.push_back(true);
 
   razor_var_names.push_back("ptHem2");
   razor_min_x.push_back(0);
-  razor_max_x.push_back(300);
+  razor_max_x.push_back(1000);
   razor_var_titles.push_back("p_{t} Hemisphere 2 [GeV]");
-  razor_isLog.push_back(false);
+  razor_isLog.push_back(true);
 
   razor_var_names.push_back("etaHem1");
   razor_min_x.push_back(-5);
@@ -315,15 +327,15 @@ void helper_validation(){
 
   razor_var_names.push_back("mHem1");
   razor_min_x.push_back(0);
-  razor_max_x.push_back(400);
+  razor_max_x.push_back(3000);
   razor_var_titles.push_back("M_{Hemisphere 1} [GeV]");
-  razor_isLog.push_back(false);
+  razor_isLog.push_back(true);
 
   razor_var_names.push_back("mHem2");
   razor_min_x.push_back(0);
-  razor_max_x.push_back(400);
+  razor_max_x.push_back(3000);
   razor_var_titles.push_back("M_{Hemipshere 2} [GeV]");
-  razor_isLog.push_back(false);
+  razor_isLog.push_back(true);
 
   // SS RAZOR VARIABLES
   razor_var_names_SS.push_back("PFMR_SS");
@@ -403,7 +415,7 @@ void helper_validation(){
   //do the typical variables
   for(int ii = 0; ii < var_names.size(); ii++) {
     if (ii == 0) n_bins = 10; //jets are binned differently
-    else n_bins = 40;
+    else n_bins = 30;
 
     //build the hist name
     TString hist_name = Form("hist_%i", ii);

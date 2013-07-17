@@ -4,7 +4,7 @@ if len(sys.argv) != 2:
     print "usage python npeek.py (NUM_JOB)"
     exit(1)
 
-os.system("bjobs | grep -v JOBID | grep RUN > running_temp.txt")
+os.system("bjobs | sort -nk 2 |  grep -v JOBID | grep RUN > running_temp.txt")
 f = open("running_temp.txt")
 f_lines = f.readlines()
 for ii in range(len(f_lines)):

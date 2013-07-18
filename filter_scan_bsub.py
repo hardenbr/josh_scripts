@@ -36,10 +36,12 @@ for px in range(pmin,pmax):
 		c_flag = "changed_lead_%i_sublead_%i" % (px,py)
 		
 		#command for the pathmaking script
-		pathmaker_cmd = "python path_maker.py -i %s -o %s -p %s -c \"hltEG26EtFilter.etcutEB = cms.double( %i.0 )\" \"hltEG26EtFilter.etcutEE = cms.double( %i.0 )\" \"hltEG18EtDoubleFilterUnseeded.etcutEB = cms.double( %i.0 )\" \"hltEG18EtDoubleFilterUnseeded.etcutEE = cms.double( %i.0 )\" -r \"%s\"\n" % (i_menu, o_menu_dir , HLT_bit, px, px, py, py, c_flag)
+		pathmaker_cmd = "python path_maker.py -i %s -o %s -p %s -c \"hltEG26EtFilter.etcutEB = cms.double( %i.0 )\" \"hltEG26EtFilter.etcutEE = cms.double( %i.0 )\" \"hltEG18EtDoubleFilterUnseeded.etcutEB = cms.double( %i.0 )\" \"hltEG18EtDoubleFilterUnseeded.etcutEE = cms.double( %i.0 )\" -r \"%s\"\n" % (i_menu, o_menu, HLT_bit, px, px, py, py, c_flag)
 
 		prod_file = "/afs/cern.ch/work/h/hardenbr/2013/HIGGS_DIPHOTON_HLT/RUN_208390_2012D_MASS_CUT/res/ohlt_output_1.root"
-		out_file = output_dir+"res/temp.root"
+
+		#name of the output file we dont really need from the filter
+		out_file = output_dir+"res/temp_%i_%i.root" % (px,py)
 
 		#comand to perform the actual filtering
 		filter_cmd = "python openHLT.py -i %s -o %s -t %s -n -1 --go\n" %(prod_file, out_file, o_menu)

@@ -33,7 +33,7 @@ for ii in raw_lines:
 raw_list=raw_list.rstrip(",\n")+"\n"
 
 #remove old instances of the output directory
-#os.system("rm -r " + output_dir) #DONT DO THIS
+os.system("rm -r " + output_dir)
 #build the directories
 os.system("mkdir " + output_dir)
 os.system("mkdir " + output_dir+"/cfgs")

@@ -25,20 +25,21 @@ os.system("mkdir " + output_dir)
 os.system("mkdir " + output_dir+"/logs")
 os.system("mkdir " + output_dir+"/src")
 os.system("mkdir " + output_dir+"/hlts")
+os.system("mkdir " + output_dir+"/res")
 
 for px in range(pmin,pmax):
 	for py in range(pmin,px):		
 		HLT_bit = "HLT_Photon26_R9Id85_OR_CaloId10_Iso50_Photon18_R9Id85_OR_CaloId10_Iso50_Mass70_v2"
 		i_menu = hlt_name
 		o_menu = "hlt_%i_%i.py" % (px, py)
-		o_menu_dir = output_dir+"/hlts/"+o_menu
+		o_menu_dir = output_dir+"hlts/"+o_menu
 		c_flag = "changed_lead_%i_sublead_%i" % (px,py)
 		
 		#command for the pathmaking script
 		pathmaker_cmd = "python path_maker.py -i %s -o %s -p %s -c \"hltEG26EtFilter.etcutEB = cms.double( %i.0 )\" \"hltEG26EtFilter.etcutEE = cms.double( %i.0 )\" \"hltEG18EtDoubleFilterUnseeded.etcutEB = cms.double( %i.0 )\" \"hltEG18EtDoubleFilterUnseeded.etcutEE = cms.double( %i.0 )\" -r \"%s\"\n" % (i_menu, o_menu_dir , HLT_bit, px, px, py, py, c_flag)
 
 		prod_file = "/afs/cern.ch/work/h/hardenbr/2013/HIGGS_DIPHOTON_HLT/RUN_208390_2012D_MASS_CUT/res/ohlt_output_1.root"
-		out_file = "/tmp/hardenbr/temp.root"
+		out_file = output_dir+"res/temp.root"
 
 		#comand to perform the actual filtering
 		filter_cmd = "python openHLT.py -i %s -o %s -t %s -n -1 --go\n" %(prod_file, out_file, o_menu)
@@ -50,11 +51,14 @@ for px in range(pmin,pmax):
 		bsub_file.write("cd /afs/cern.ch/user/h/hardenbr/2013/HIGGS_DIPHOTON_HLT/NEW_OPEN_HLT/CMSSW_5_2_8_patch1/src\n")
 		bsub_file.write("export SCRAM_ARCH=slc5_amd64_gcc462 \n")
 		bsub_file.write("eval `scramv1 ru -sh`\n")
-		bsub_file.write("cp %s . \n" % o_menu_dir)
 		bsub_file.write(pathmaker_cmd)
+		#copy the hlt file locally so the cfg file will compile "no /'s"
+		bsub_file.write("cp %s /afs/cern.ch/user/h/hardenbr/2013/HIGGS_DIPHOTON_HLT/NEW_OPEN_HLT/CMSSW_5_2_8_patch1/src/ \n" % o_menu_dir)
 		bsub_file.write(filter_cmd)
+		#clean up the hlt files made, and unnecessary output file 
 		bsub_file.write("rm %s \n" % o_menu)
-
+		bsub_file.write("rm %sc \n" % o_menu)
+		bsub_file.write("rm %s \n" % out_file)
                 #write out the commands
 		cmd="bsub -q 1nd "
 		cmd+= "-o " + output_dir + "/logs/log_"+str(px)+"_"+str(py)+".log "

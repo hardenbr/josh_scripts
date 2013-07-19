@@ -4,8 +4,8 @@
 
 import sys, os
 #print usage message
-if len(sys.argv) != 5:
-	print "usage filter_new_ohlt_config_maker.py <pmin> <pmax> <hlt.cfg> <full_path_to_output_dir>"
+if len(sys.argv) != 6:
+	print "usage filter_new_ohlt_config_maker.py <pmin> <pmax> <hlt.cfg> <full_path_to_output_dir> <njobs>"
         exit(1)
 
 #get some names and paths
@@ -16,10 +16,11 @@ hlt_name = sys.argv[3]
 #OPEN THE FILES
 pmin = int(sys.argv[1])
 pmax = int(sys.argv[2])
+njobs = int(sys.argv[5])
 #READ THE LINES IN
 
 #remove old instances of the output directory
-os.system("rm -r " + output_dir)
+os.system("rm -ri " + output_dir)
 #build the directories
 os.system("mkdir " + output_dir)
 os.system("mkdir " + output_dir+"/logs")
@@ -27,6 +28,9 @@ os.system("mkdir " + output_dir+"/src")
 os.system("mkdir " + output_dir+"/hlts")
 os.system("mkdir " + output_dir+"/res")
 
+
+commands = []
+#generate the commands pathmaker_cmd and filter_cmd
 for px in range(pmin,pmax):
 	for py in range(pmin,px):		
 		HLT_bit = "HLT_Photon26_R9Id85_OR_CaloId10_Iso50_Photon18_R9Id85_OR_CaloId10_Iso50_Mass70_v2"
@@ -41,29 +45,56 @@ for px in range(pmin,pmax):
 		prod_file = "/afs/cern.ch/work/h/hardenbr/2013/HIGGS_DIPHOTON_HLT/RUN_208390_2012D_MASS_CUT/res/ohlt_output_1.root"
 
 		#name of the output file we dont really need from the filter
-		out_file = output_dir+"res/temp_%i_%i.root" % (px,py)
-		go_file = "go_%s_%s.py" % (px,py)
+		out_file = output_dir+"res/temp_%i_%i.root" % (px, py)
+		go_file = "go_%s_%s.py" % (px, py)
+		log_file = output_dir + "logs/log_%s_%s" % (px, py)
 		#comand to perform the actual filtering
-		filter_cmd = "python openHLT.py -i %s -o %s -t %s -n -1 -g %s --go\n" %(prod_file, out_file, o_menu, go_file)
-			   
-                #now write the source files for bsub
-		bsub_file_name = output_dir+"/src/"+"bsub_"+str(px)+"_"+str(py)+".src"
+		filter_cmd = "python openHLT.py -i %s -o %s -t %s -n -1 -g %s --go \n" %(prod_file, out_file, o_menu, go_file)			   
+
+		#clean up the hlt files made, and unnecessary output file 
+		cleanup_cmd = "rm %s %sc %s %s\n" % (o_menu, o_menu, out_file, go_file)
+
+		commands.append([pathmaker_cmd,filter_cmd,cleanup_cmd])
+
+#write the bsub commands
+job = 0
+file_counter = 0
+cmds_per_job = int(len(commands)) / int(njobs) #integer division
+bsub_cmds = []
+bsub_file = None
+
+#loop over all commands
+for ii in range(len(commands)):
+	#make sure the extra jobs are added to the last file
+	if (file_counter == 0) and (job != njobs):		
+		#write a new job
+		bsub_file_name = output_dir+"/src/bsub_%i.src" % job
 		bsub_file = open(bsub_file_name,"a")
 		bsub_file.write('#!/bin/bash\n')
 		bsub_file.write("cd /afs/cern.ch/user/h/hardenbr/2013/HIGGS_DIPHOTON_HLT/NEW_OPEN_HLT/CMSSW_5_2_8_patch1/src\n")
 		bsub_file.write("export SCRAM_ARCH=slc5_amd64_gcc462 \n")
 		bsub_file.write("eval `scramv1 ru -sh`\n")
-		bsub_file.write(pathmaker_cmd)
-		#copy the hlt file locally so the cfg file will compile "no /'s"
-		bsub_file.write("cp %s /afs/cern.ch/user/h/hardenbr/2013/HIGGS_DIPHOTON_HLT/NEW_OPEN_HLT/CMSSW_5_2_8_patch1/src/ \n" % o_menu_dir)
-		bsub_file.write(filter_cmd)
-		#clean up the hlt files made, and unnecessary output file 
-		bsub_file.write("rm %s \n" % o_menu)
-		bsub_file.write("rm %sc \n" % o_menu)
-		bsub_file.write("rm %s \n" % out_file)
-                #write out the commands
+
 		cmd="bsub -q 1nd "
-		cmd+= "-o " + output_dir + "/logs/log_"+str(px)+"_"+str(py)+".log "
+		cmd+= "-o %s/logs/job_%i.log " % (output_dir ,job)
 		cmd+="source "+ bsub_file_name
-                cmd+=";sleep 1"
-		print cmd
+
+		bsub_cmds.append(cmd)
+
+		#increment the counter
+		job+=1
+
+	bsub_file.write(commands[ii][0])
+	bsub_file.write(commands[ii][1])
+	bsub_file.write(commands[ii][2])
+	
+	#if we are at the number of commands per job reset the counter
+	if file_counter == cmds_per_job:file_counter = 0		
+	elif job == njobs:
+		continue
+	else:
+		file_counter+=1
+
+#print out the submission commands
+for ii in bsub_cmds:print ii
+	

@@ -77,8 +77,8 @@ for ii in range(n_raw):
         bsub_file.write("cmsRun " + new_file_name)
 
         #write out the commands
-        cmd="bsub -q 1nd "
-        cmd+= "-o " + output_dir + "/logs/log_" + str(ii) +".log "
-        cmd+="source "+ bsub_file_name
+        queue = "all.q@compute-2-4.local,all.q@compute-3-2.local,all.q@compute-3-7.local,all.q@compute-3-8.local"
+        logarea = output_dir +"/logs/"
+        cmd= "qsub -o %s -e %s -q %s %s" % (logarea,logarea, queue, bsub_file_name)
                 
         print cmd

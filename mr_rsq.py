@@ -1,7 +1,15 @@
 import sys, os
 import ROOT as rt
 
-if len(sys.argv) != 2:
-    print "usage mr_rsq.py [ROOT_FILE]"
+if len(sys.argv) != 3:
+    print "usage mr_rsq.py [ROOT_FILE] <binned=1;ubinnned=0>"
+    exit(1)
 
-os.system("root " + sys.argv[1] + " -c ~/josh_scripts/helper_mr_rsq_2013.C -l -b")
+binning = int(sys.argv[2])
+
+if binning == 0:
+    os.system("root " + sys.argv[1] + " -c ~/josh_scripts/helper_mr_rsq_2013.C -l -b")
+elif binning == 1:
+    os.system("root " + sys.argv[1] + " -c ~/josh_scripts/helper_mr_rsq_2013_binned.C -l -b")
+else:
+    print "usage mr_rsq.py [ROOT_FILE] <binned=1;ubinnned=0>"

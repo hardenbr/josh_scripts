@@ -26,7 +26,7 @@ os.system("mkdir " + output_dir+"/res")
 commands = []
 for ii in input_lines:
     name = os.path.basename(ii).rstrip("\n")
-    dir = os.path.dirname(ii)
+    dir = output_dir+"/res"
     outputfile = os.path.join(dir, "red_"+name)
     input_file = ii.rstrip("\n")
     input_list = input_file+".list"
@@ -50,11 +50,17 @@ for ii in range(len(commands)):
         bsub_file_name = output_dir+"/src/bsub_%i.src" % job
         bsub_file = open(bsub_file_name,"a")
         bsub_file.write('#!/bin/bash\n')
+        bsub_file.write('#$ -S /bin/sh \n')
         bsub_file.write("cd /home/jhardenbrook/2013/RAZOR_DIPHOTON/HggApp_Razor/CMSSW_6_2_0\n")
         bsub_file.write("export SCRAM_ARCH=slc5_amd64_gcc462 \n")
+        bsub_file.write("export HADOOP_CONF_DIR=/etc/hadoop \n")
         bsub_file.write("eval `scramv1 ru -sh`\n")
         bsub_file.write("cd .. \n")
-        cmd = "bsub -q 1nd -o %s/logs/job_%i.log source %s" % (output_dir, job, bsub_file_name)       
+
+        queue = "all.q@compute-2-4.local,all.q@compute-3-2.local,all.q@compute-3-7.local,all.q@compute-3-8.local"
+        logarea = output_dir +"/logs/"
+        cmd= "qsub -o %s -e %s -q %s %s" % (logarea,logarea, queue, bsub_file_name)
+
         bsub_cmds.append(cmd)
 
 		#increment the counter

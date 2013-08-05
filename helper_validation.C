@@ -92,7 +92,7 @@ void helper_validation(){
   vector<bool> isLog;
   vector<bool> razor_isLog;
 
-  TCut baseline  = "PFMR > 0 && PFR^2 > 0" ;
+  TCut baseline  = "PFMR > 0 && PFR^2 > 0 && iSamp==1" ;
   int n_bins = 30;  
 
   //add the variable names

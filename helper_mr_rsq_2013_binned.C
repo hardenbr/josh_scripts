@@ -1,4 +1,8 @@
 {
+  double bins_mr[12] = {100,150,200,250,300,350,400,500,600,800,1000,1500};
+  double bins_rsq[11] = {.03,.05, .1, .15, .2, .25,.3, .35, .45, .6, 1};
+  Int_t nbins_mr = 11;
+  Int_t nbins_rsq = 10;
   Int_t font = 42;
 
   gStyle->SetPalette(1);
@@ -78,19 +82,26 @@
   Int_t max_mr = 1500;
   Float_t min_rsq = .03;
   Float_t max_rsq = 1;
-  Int_t nbins_mr = 25;
-  Int_t nbins_rsq = 25;
+
 
   Int_t min_events  = 1;
   Int_t max_events = 40000;
+  TH2F * hist  = new TH2F("hist" ,"hist", nbins_mr,bins_mr,nbins_rsq,bins_rsq);
+  TH2F * hist2  = new TH2F("hist2" ,"hist2", nbins_mr,bins_mr,nbins_rsq,bins_rsq);
+  TH1F * hist3 = new TH1F("hist3","hist3",nbins_rsq,bins_rsq);
+  TH1F * hist4 = new TH1F("hist4","hist4",nbins_rsq,bins_rsq);
 
+  TH1F * hist5 = new TH1F("hist5","hist5",nbins_mr,bins_mr);
+  TH1F * hist6 = new TH1F("hist6","hist6",nbins_mr,bins_mr);
+
+  /*
   TH2F * hist  = new TH2F("hist" ,"hist", nbins_mr,min_mr,max_mr,nbins_rsq,min_rsq,max_rsq);
   TH2F * hist2 = new TH2F("hist2","hist2",nbins_mr,min_mr,max_mr,nbins_rsq,min_rsq,max_rsq);
   TH1F * hist3 = new TH1F("hist3","hist3",nbins_rsq,min_rsq,max_rsq);
   TH1F * hist4 = new TH1F("hist4","hist4",nbins_rsq,min_rsq,max_rsq);
   TH1F * hist5 = new TH1F("hist5","hist5",nbins_mr,min_mr,max_mr);
   TH1F * hist6 = new TH1F("hist6","hist6",nbins_mr,min_mr,max_mr);
-
+  */
   TH2F * hists_2D[2];
   TH1F * hists_1D[4];
 

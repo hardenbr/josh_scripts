@@ -92,15 +92,29 @@ void helper_validation(){
   vector<bool> isLog;
   vector<bool> razor_isLog;
 
-  TCut baseline  = "PFMR > 0 && PFR^2 > 0 && iSamp==1" ;
+
+  TCut baseline  = "PFMR > 0 && PFR^2 > 0 && iSamp==0" ;
+
   int n_bins = 30;  
 
   //add the variable names
   var_names.push_back("nJets");
   min_x.push_back(0.);
-  max_x.push_back(10.);
+  max_x.push_back(20);
   var_titles.push_back("Number of Jets");
   isLog.push_back(true);
+
+  var_names.push_back("Number of Jets");
+  min_x.push_back(0.);
+  max_x.push_back(3.141);
+  var_titles.push_back("#Delta#phi(Calo ME_{T} , PF ME_{T})");
+  isLog.push_back(false);
+
+  var_names.push_back("AnglePho");
+  min_x.push_back(0.);
+  max_x.push_back(3.141);
+  var_titles.push_back("#Delta#phi(#gamma_{1},#gamma_{2})");
+  isLog.push_back(false);
 
   var_names.push_back("PhotonPFCiC.dr03PFChargedIso[0]");
   min_x.push_back(-1.);
@@ -200,13 +214,13 @@ void helper_validation(){
 
   var_names.push_back("PhotonPFCiC.HoverE[0]");
   min_x.push_back(0);
-  max_x.push_back(.9);
+  max_x.push_back(.11);
   var_titles.push_back("Sub Leading Photon H/E");
   isLog.push_back(true);
 
   var_names.push_back("PhotonPFCiC.HoverE[1]");
   min_x.push_back(0);
-  max_x.push_back(.9);
+  max_x.push_back(.11);
   var_titles.push_back("Leading Photon H/E");
   isLog.push_back(true);
 
@@ -337,6 +351,12 @@ void helper_validation(){
   razor_var_titles.push_back("M_{Hemipshere 2} [GeV]");
   razor_isLog.push_back(true);
 
+  razor_var_names.push_back("AngleHem");
+  razor_min_x.push_back(0.);
+  razor_max_x.push_back(3.141);
+  razor_var_titles.push_back("#Delta #phi(Hem_{1},Hem_{2})");
+  razor_isLog.push_back(false);
+
   // SS RAZOR VARIABLES
   razor_var_names_SS.push_back("PFMR_SS");
   razor_var_titles_SS.push_back("M_{R} SS [GeV]");
@@ -367,6 +387,9 @@ void helper_validation(){
 
   razor_var_names_SS.push_back("mHem2_SS");
   razor_var_titles_SS.push_back("M_{Hem2} SS [GeV]");
+
+  razor_var_names_SS.push_back("AngleHem_SS");
+  razor_var_titles_SS.push_back("#Delta #phi (Hem_{1},Hem_{2}) SS");
 
   //OS Variables
   // SS RAZOR VARIABLES
@@ -400,6 +423,9 @@ void helper_validation(){
   razor_var_names_OS.push_back("mHem2_OS");
   razor_var_titles_OS.push_back("M_{Hem2} OS [GeV]");
 
+  razor_var_names_SS.push_back("AngleHem_OS");
+  razor_var_titles_SS.push_back("#Delta #phi (Hem_{1},Hem_{2}) OS");
+
   //  TPaveText *pt = new TPaveText(.5,.53,.5,.5,"NDC");
   TPaveText *pt = new TPaveText();
   pt->AddText("CMS Preliminary #sqrt{s} = 8 TeV");
@@ -414,7 +440,7 @@ void helper_validation(){
 
   //do the typical variables
   for(int ii = 0; ii < var_names.size(); ii++) {
-    if (ii == 0) n_bins = 10; //jets are binned differently
+    if (ii == 0) n_bins = 20; //jets are binned differently
     else n_bins = 30;
 
     //build the hist name

@@ -50,17 +50,18 @@ commands = []
 for px in range(pmin,pmax):
 	for py in range(pmin,px):
 		if [px,py] in finished_points: continue
-		
-		HLT_bit = "HLT_Photon26_R9Id85_OR_CaloId10_Iso50_Photon18_R9Id85_OR_CaloId10_Iso50_Mass70_v2"
+		HLT_bit = "HLT_Photon36_R9Id85_OR_CaloId10_Iso50_Photon22_R9Id85_OR_CaloId10_Iso50_v6"
+#		HLT_bit = "HLT_Photon26_R9Id85_OR_CaloId10_Iso50_Photon18_R9Id85_OR_CaloId10_Iso50_Mass70_v2"
 		i_menu = hlt_name
 		o_menu = "hlt_%i_%i.py" % (px, py)
 		o_menu_dir = output_dir+"hlts/"+o_menu
 		c_flag = "changed_lead_%i_sublead_%i_mass0" % (px,py)
 		
 		#command for the pathmaking script
-		pathmaker_cmd = "python path_maker.py -i %s -o %s -p %s -c \"hltEG26EtFilter.etcutEB = cms.double( %i.0 )\" \"hltEG26EtFilter.etcutEE = cms.double( %i.0 )\" \"hltEG18EtDoubleFilterUnseeded.etcutEB = cms.double( %i.0 )\" \"hltEG18EtDoubleFilterUnseeded.etcutEE = cms.double( %i.0 )\" \"hltPhoton26R9Id85ORCaloId10Iso50Photon18R9Id85ORCaloId10Iso50Mass70EgammaAllCombMassLastFilter.minMass = cms.double(0.0) \" -r \"%s\"\n" % (i_menu, o_menu, HLT_bit, px, px, py, py, c_flag)
+		pathmaker_cmd = "python path_maker.py -i %s -o %s -p %s -c \"hltEG36EtFilter.etcutEB = cms.double( %i.0 )\" \"hltEG36EtFilter.etcutEE = cms.double( %i.0 )\" \"hltEG22EtDoubleFilterUnseeded.etcutEB = cms.double( %i.0 )\" \"hltEG22EtDoubleFilterUnseeded.etcutEE = cms.double( %i.0 )\" -r \"%s\"\n" % (i_menu, o_menu, HLT_bit, px, px, py, py, c_flag)
+#		pathmaker_cmd = "python path_maker.py -i %s -o %s -p %s -c \"hltEG26EtFilter.etcutEB = cms.double( %i.0 )\" \"hltEG26EtFilter.etcutEE = cms.double( %i.0 )\" \"hltEG18EtDoubleFilterUnseeded.etcutEB = cms.double( %i.0 )\" \"hltEG18EtDoubleFilterUnseeded.etcutEE = cms.double( %i.0 )\" -r \"%s\"\n" % (i_menu, o_menu, HLT_bit, px, px, py, py, c_flag)
 
-		prod_file = "/afs/cern.ch/work/h/hardenbr/2013/HIGGS_DIPHOTON_HLT/RUN_208390_2012D_MASS_CUT/res/ohlt_output_1.root"
+		prod_file = "/afs/cern.ch/work/h/hardenbr/2013/HIGGS_DIPHOTON_HLT/RUN_208390_2012D_hgg/res/ohlt_output_1.root"
 
 		#name of the output file we dont really need from the filter
 		out_file = output_dir+"/res/temp_%i_%i.root" % (px, py)

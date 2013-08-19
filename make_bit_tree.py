@@ -2,18 +2,22 @@ import ROOT, numpy
 from DataFormats.FWLite import Events, Handle
 import os, sys
 import ROOT as rt
-nargs = 4
+
+nargs = 7
 
 if len(sys.argv) != nargs+1:
-    print "usage make_bit_tree.py <pt1> <pt2> <filter_output.root> <tree_output.root>"
+    print "usage make_bit_tree.py <pt1> <pt2> <filter_output.root> <tree_output.root> <name_of_changed_bit> <mass> <new_bit_name>"
     exit(1)
 
 pt1 = int(sys.argv[1])
 pt2 = int(sys.argv[2])
 file = sys.argv[3]
 tree_output = sys.argv[4]
+HLTBit = sys.argv[5]
+mass = int(sys.argv[6])
+new_bit_name = sys.argv[7]
 
-variables = [["int","pt1"],["int","pt2"],["int","bit0"],["int","bit1"],["int","bit2"],["int","bit3"],["int","counter"]]
+variables = [["int","pt1"],["int","pt2"],["int","hlt_mass"],["int","hlt_nomass"],["int","hlt_mass_hipt"],["int",new_bit_name],["int","counter"],["int","mass"]]
 
 stringStruct = "{\n\t struct thisStruct{\n \t"
 for ii in variables:
@@ -60,7 +64,7 @@ ROOT.gROOT.SetBatch()
 counter = 0
 
 for event in events:    
-    if counter % 10000 == 0: print "Analyzing " + str(counter) + "..."
+    if counter % 1000 == 0: print "Analyzing " + str(counter) + "..."
 
 
     event.getByLabel(input_tag, handle)
@@ -69,16 +73,21 @@ for event in events:
     
     trignames = event.object().triggerNames(trigres)
 
-    index_changed = trignames.triggerIndex("HLT_Photon36_R9Id85_OR_CaloId10_Iso50_Photon22_R9Id85_OR_CaloId10_Iso50_changed_lead_23_sublead_22_mass0_v1") #2
+    changed_bit = HLTBit[:-3]+"_changed_lead_%i_sublead_%i_mass%i_v1" % (pt1, pt2, mass)
+
+    index_changed = trignames.triggerIndex(changed_bit) #2
     index_nomass = trignames.triggerIndex("HLT_Photon36_R9Id85_OR_CaloId10_Iso50_Photon22_R9Id85_OR_CaloId10_Iso50_v6") #1
     index_mass = trignames.triggerIndex("HLT_Photon26_R9Id85_OR_CaloId10_Iso50_Photon18_R9Id85_OR_CaloId10_Iso50_Mass70_v2") #0
+    index_mass_highpt = trignames.triggerIndex("HLT_Photon36_R9Id85_OR_CaloId10_Iso50_Photon10_R9Id85_OR_CaloId10_Iso50_Mass80_v1")
 
-    setattr(s, "bit0", trigres[index_mass].accept())
-    setattr(s, "bit1", trigres[index_nomass].accept())
-    setattr(s, "bit2", trigres[index_changed].accept())
-    setattr(s, "bit3", 0)
+    setattr(s, "hlt_mass", trigres[index_mass].accept())
+    setattr(s, "hlt_nomass", trigres[index_nomass].accept())
+    setattr(s, "hlt_mass_hipt", trigres[index_mass_highpt].accept())
+    setattr(s, new_bit_name, trigres[index_changed].accept())
+
     setattr(s, "pt1" , pt1)
     setattr(s, "pt2" , pt2)
+    setattr(s, "mass", mass)
     setattr(s, "counter", counter)
 
     myTree.Fill()    

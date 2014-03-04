@@ -47,8 +47,7 @@ for ii in variables:
         myTree.Branch(branchName, rt.AddressOf(s,varName),'%s/F' %varName)
         #    if ii[0] == "vector<float>":
         #        myTree.Branch(branchName, varName)
-
-    
+        
 events = Events(file)
 
 #handle = Handle('trigger::TriggerEvent')

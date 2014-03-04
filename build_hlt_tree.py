@@ -74,10 +74,11 @@ vectors = []
 vectors_cand = []
 for ii in handles:
     vector = rt.vector("float")()
-    vectors.append((ii[0][0],vector))
+    vectors.append((ii[0][0],vector)) #(label, vector)
 
 candidates = ["pt","eta","phi","energy"]
 
+#kinematic, vector pairs
 for ii in candidates:
     vector = rt.vector("float")()
     vectors_cand.append((ii,vector))
@@ -93,7 +94,7 @@ for ii in vectors_cand:
     tree.Branch(ii[0],ii[1])
 
 
-# Create a struct
+# Create a struct for the run information
 rt.gROOT.ProcessLine(\
       "struct MyStruct{\
       Int_t run;\
@@ -113,8 +114,8 @@ tree.Branch("event",rt.AddressOf(s,"event"),"event/I")
 #retreives the lables for a handle for an event
 def getAllLabels(event):
     for ii in handles:
-        input_tag = ii[0]
-        handle = ii[1]
+        input_tag = ii[0] #triplet (label, middle, process(
+        handle = ii[1] 
         event.getByLabel(input_tag, handle)
 
 #gets the maps for all of the handles and returns a list
@@ -122,9 +123,9 @@ def getMaps():
     maps = []
 
     for ii in handles:
-        product = ii[1].product()
-        name = ii[0][0]        
-        maps.append((name,ii[1].product()))
+        product = ii[1].product() #handle.product
+        name = ii[0][0] #label        
+        maps.append((name,product))
 
     return maps
 
@@ -133,7 +134,7 @@ for event in events:
     if counter % 1000 == 0: print "Analyzing " + str(counter) + "..."
 
     getAllLabels(event)
-    maps = getMaps()
+    maps = getMaps() # list of (name, product)
 
     aux = event.eventAuxiliary()
     s.run = aux.run()
@@ -141,19 +142,21 @@ for event in events:
     s.event = aux.event()
     
     for map in maps:
-        name = map[0]
+        name = map[0]        
         values = map[1].values()
-        cand = map[1].refProd().key.product()
+        cand = map[1].refProd().key.product()        
         handle_ii = maps.index(map)
         
         for ii in range(values.size()):
             vectors[handle_ii][1].push_back(values[ii])
 
-        for ii in range(cand.size()):
-            for vec in vectors_cand:
-                name = vec[0]
-                val = eval("cand[ii].%s()"%name)                
-                if maps.index(map) == 0: vec[1].push_back(val)                              
+        if cand != None:
+            for ii in range(values.size()): # for each entry
+                for vec in vectors_cand: #loop over pt, eta, phi ect..
+                    name = vec[0]
+                    val = eval("cand[%i].%s()" % (ii,name)) # fill the coressponding val                
+                    if maps.index(map) == 9: vec[1].push_back(val)  #9 is an index for activity handle
+                    # if we used a different index we would only get kinematics for those bits
 
     #fill tree and clear the vectors out
     tree.Fill()

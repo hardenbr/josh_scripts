@@ -11,7 +11,7 @@ if n_passed != nargs and n_passed != noptargs:
     print "usage python bit_tree_combiner_bsub.py <mass_trigger_tree_dir> <no_mass_trigger_tree_dir> <mass_hipt_trigger_tree_dir> <NJOBS> <OUTPUT_DIR> <FORCE_REMOVE=1>" 
     exit(1)
 
-
+do_third = False 
 
 tree_mass_dir = sys.argv[1]
 tree_no_mass_dir = sys.argv[2]
@@ -23,7 +23,6 @@ force_remove = int(sys.argv[4])
 if force_remove:
     os.system("rm -r " + output_dir)
 
-
 list_mass_trees = os.listdir(tree_mass_dir)
 list_no_mass_trees = os.listdir(tree_no_mass_dir)
 list_mass_hipt_trees = os.listdir(tree_mass_hipt_dir)
@@ -34,10 +33,13 @@ for ii in list_mass_trees:
     for jj in list_no_mass_trees:        
         if "tree" not in jj: continue
         #if we are doing a third trigger
-        for kk in list_mass_hipt_trees:
-            if "tree" not in kk: continue                
 
-            tree_list.append([ii,jj,kk])
+        if do_third:
+            for kk in list_mass_hipt_trees:
+                if "tree" not in kk: continue                
+                tree_list.append([ii,jj,kk])
+        else:
+            tree_list.append([ii,jj])
 
 
 ntrees_comb = len(tree_list)
@@ -63,10 +65,15 @@ for ii in range(njobs):
 	counter+= trees_per_job
 	if ii == njobs-1:
 		end = ntrees_comb
-	
-	cmd = "python ~/josh_scripts/bit_tree_combiner.py %s %s %s %i %i" % (tree_mass_dir, tree_no_mass_dir, tree_mass_hipt_dir, begin, end)
 
-	commands.append(cmd)
+        cmd = ""
+
+        if do_third:
+            cmd = "python ~/josh_scripts/bit_tree_combiner.py %i %i %s %s %s" % (begin,end,tree_mass_dir, tree_no_mass_dir, tree_mass_hipt_dir)
+        else:
+            cmd = "python ~/josh_scripts/bit_tree_combiner.py %i %i %s %s" % (begin,end,tree_mass_dir, tree_no_mass_dir)
+
+        commands.append(cmd)
 
 #write the bsub commands
 job = 0

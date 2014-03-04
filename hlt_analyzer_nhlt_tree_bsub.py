@@ -61,6 +61,7 @@ os.system("mkdir " + output_dir+"/cfgs")
 os.system("mkdir " + output_dir+"/logs")
 os.system("mkdir " + output_dir+"/src")
 os.system("mkdir " + output_dir+"/res")
+os.system("cp ~/josh_scripts/build_hlt_tree.py %s" % output_dir)
 
 #strings to be replaced in the config file
 #reco_replace_string = "#$REPLACE_RECO$#"
@@ -95,7 +96,7 @@ for ii in range(n_raw):
 	output_tree_path = output_dir+"/res/hlt_tree_%i.root" % ii
 	cmd_cmsrun = "cmsRun %s\n" % new_file_name
 
-	cmd_tree = "~/josh_scripts/build_hlt_tree.py -f %s -o %s \n" % (output_file_path,output_tree_path)
+	cmd_tree = "python %s/build_hlt_tree.py -f %s -o %s \n" % (output_dir,output_file_path,output_tree_path)
 	cmd_rm = "rm %s \n" % output_file_path
 
 	commands.append((cmd_cmsrun,cmd_tree,cmd_rm))

@@ -1,15 +1,22 @@
 import sys, os
 import ROOT as rt
 
+#THINGS TO CHANGE:
+#1. RAW RATE FOR THE UNALTERED TRIGGER
+#2. THE NUMBER OF EVENTS THE NOMINAL TRIGGER PASSES (RAW)
+#3. NAME OF THE BIT TO BE RETRIEVED FROM THE TREE FILE
+#4. THE NAME OF THE BIT BEING PULLED FROM THE BRANCH
+
+
 noptargs = 5
 nargs = 4
 n_passed = len(sys.argv)-1
 if n_passed != nargs and n_passed != noptargs:
-    print "usage python bit_tree_combiner.py <mass_trigger_tree_dir> <no_mass_trigger_tree_dir> <mass_hipt_trigger_tree_dir OPTIONAL> <BEGIN_COUNTER> <END_COUNTER>" 
+    print "usage python bit_tree_combiner.py <BEGIN_COUNTER> <END_COUNTER> <mass_trigger_tree_dir> <no_mass_trigger_tree_dir> <mass_hipt_trigger_tree_dir OPTIONAL> " 
     exit(1)
 
 raw_rate_mass = 18.32
-raw_rate_nomass = 11.16
+raw_rate_nomass = 11.16#18.32
 raw_rate_mass_hipt = 17.36
 
 nominal_lumi = 6e33
@@ -18,17 +25,17 @@ nominal_pass_mass = 5563.
 nominal_pass_nomass = 3416.
 nominal_pass_mass_hipt = 5264.
 
-do_third = True
+do_third = False
 
-tree_mass_dir = sys.argv[1]
-tree_no_mass_dir = sys.argv[2]
+tree_mass_dir = sys.argv[3]
+tree_no_mass_dir = sys.argv[4]
 tree_mass_hipt_dir = ""
 
-start_counter = int(sys.argv[4])
-end_counter = int(sys.argv[5])
+start_counter = int(sys.argv[1])
+end_counter = int(sys.argv[2])
 
-mass_bit_name = "hlt_mass_scan"
-no_mass_bit_name = "hlt_nomass_scan"
+mass_bit_name = "hlt_mass_scan"#"hlt_mass100_scan"
+no_mass_bit_name = "hlt_nomass_scan"#"hlt_mass100_scan"
 mass_hipt_bit_name = "hlt_mass_hipt_scan"
 
 list_mass_trees = os.listdir(tree_mass_dir)
@@ -36,14 +43,19 @@ list_no_mass_trees = os.listdir(tree_no_mass_dir)
 list_mass_hipt_trees = []
 
 if do_third:
-    tree_mass_hipt_dir = sys.argv[3]
+    tree_mass_hipt_dir = sys.argv[5]
     list_mass_hipt_trees = os.listdir(tree_mass_hipt_dir)
 
 print "----------------------------------------------------------"
 if do_third:
     print "COUNTER NEVENTS N_PASS|  MASS_PX MASS_PY MASS_NUNIQ MASS_RAW |  NOMASS_PX NOMASS_PY NOMASS_NUNIQ NO_MASS_RAW | MASS_HIPT_PX MASS_HIPT_PY MASS_HIPT_NPASS MASS_HIPT_RAW | NMASS_NOMASS N_MASS_HIPT  NOMASS_HIPT | N_ALLFIRE N_NOFIRE"
 else:
-    print "REPLACE THIS"
+    print "nominal pass mass, rate:",mass_bit_name, nominal_pass_mass
+    print "nominal pass nomass, rate:", no_mass_bit_name, nominal_pass_nomass
+    print "nominal lumi:", nominal_lumi
+
+
+    print "COUNTER NEVENTS N_PASS|  MASS_PX MASS_PY MASS_NUNIQ MASS_RAW |  NOMASS_PX NOMASS_PY NOMASS_NUNIQ NO_MASS_RAW | N_ALLFIRE N_NOFIRE | TOTAL_RATE"
 print "----------------------------------------------------------"
 
 tree_list = []
@@ -110,7 +122,12 @@ for ii in tree_list:
         no_mass_tree.GetEntry(entry)
 
         hlt_bit_mass.append(mass_tree.hlt_mass_scan)
+        #hlt_bit_no_mass.append(no_mass_tree.hlt_mass100_scan)
         hlt_bit_no_mass.append(no_mass_tree.hlt_nomass_scan)
+
+        #IF WE ARENT DOING THE THIRD LET IT NEVER TRIGGER
+        if not do_third:
+            hlt_bit_mass_hipt.append(0)
 
     #IF WE WANT TO INCLUDE THE THIRD TRIGGER
     if do_third:
@@ -124,12 +141,7 @@ for ii in tree_list:
 
         for entry in range(nentries):
             mass_hipt_tree.GetEntry(entry)            
-            hlt_bit_mass_hipt.append(mass_hipt_tree.hlt_mass_hipt_scan)
-    #IF WE ARENT DOING THE THIRD LET IT NEVER TRIGGER
-    else:
-        for entry in range(nentries):
-            hlt_bit_mass_hipt.append(0)
-    
+            hlt_bit_mass_hipt.append(mass_hipt_tree.hlt_mass_hipt_scan)   
         
     #CALCULATE THE UNIQUE RATES
     uniq_mass_bits = 0
@@ -159,7 +171,6 @@ for ii in tree_list:
         two_mass_nomass = hlt_bit_mass[ii] and hlt_bit_no_mass[ii] and not hlt_bit_mass_hipt[ii]
         two_mass_hipt = False
         two_nomass_hipt = False
-
         three_all = False
         
         
@@ -188,8 +199,16 @@ for ii in tree_list:
 
     rate_factor_mass = raw_rate_mass / nominal_pass_mass
     rate_factor_nomass = raw_rate_nomass / nominal_pass_nomass
-    rate_factor_mass_hipt = raw_rate_mass_hipt / nominal_pass_mass_hipt
-    average_rate = (rate_factor_mass + rate_factor_nomass + rate_factor_mass_hipt) / 3.0
+    rate_factor_mass_hipt = 0
+
+    average_rate = 0
+    
+
+    if do_third:
+        rate_factor_mass_hipt = raw_rate_mass_hipt / nominal_pass_mass_hipt
+        average_rate = (rate_factor_mass + rate_factor_nomass + rate_factor_mass_hipt) / 3.0
+    else:
+        average_rate = (rate_factor_mass + rate_factor_nomass) / 2.0 
 
     total_rate = average_rate *  float(len(hlt_bit_mass) - none) 
     
@@ -200,5 +219,5 @@ for ii in tree_list:
         print counter, len(hlt_bit_mass), all, "|",ii_x, ii_y, uniq_mass_bits, raw_mass_bits,"|", jj_x, jj_y, uniq_no_mass_bits, raw_no_mass_bits,"|", kk_x, kk_y, uniq_mass_hipt_bits, raw_mass_hipt_bits, "|", mass_nomass, mass_hipt, nomass_hipt, "|", all, none, "|", total_rate
 
     else:
-        print "REPLACE THIS STATEMENT"
+        print counter, len(hlt_bit_mass), all, "|",ii_x, ii_y, uniq_mass_bits, raw_mass_bits,"|", jj_x, jj_y, uniq_no_mass_bits, raw_no_mass_bits,"|", mass_nomass, none, "|", total_rate        
             

@@ -3,27 +3,32 @@
 
 import sys, os
 #print usage message
-if len(sys.argv) != 8 and len(sys.argv) != 9:
-	print "usage filter_new_ohlt_config_maker.py <pmin> <pmax> <hlt.cfg> <full_path_to_output_dir> <njobs> <force_remove=1> <new_bit_name> <max_splitting> <finished_jobs.txt OPTIONAL>"
+if len(sys.argv) != 9 and len(sys.argv) != 10:
+	print "usage filter_new_ohlt_config_maker.py <p1min> <p1max> <p2min> <p2max> <hlt.cfg> <full_path_to_output_dir> <njobs> <force_remove=1> <new_bit_name> <finished_jobs.txt OPTIONAL>"
         exit(1)
 
 pwd = os.getenv("PWD")
-output_dir = sys.argv[4]
-hlt_name = sys.argv[3]
+
 
 pmin = int(sys.argv[1])
 pmax = int(sys.argv[2])
-njobs = int(sys.argv[5])
-force_remove = int(sys.argv[6])
-new_bit_name = sys.argv[7]
-max_splitting = int(sys.argv[8])
+p2min = int(sys.argv[3])
+p2max = int(sys.argv[4])
+
+hlt_name = sys.argv[5]
+output_dir = sys.argv[6]
+
+njobs = int(sys.argv[7])
+
+force_remove = int(sys.argv[8])
+new_bit_name = sys.argv[9]
 
 finished_jobs = None
 finished_lines = None
 finished_points = []
 
 #in the optiona case of finished lines
-if len(sys.argv) == 10:
+if len(sys.argv) == 100000:
 	finished_jobs = open(sys.argv[9], "r")
 	finished_lines = finished_jobs.readlines()
 
@@ -48,18 +53,17 @@ os.system("mkdir " + output_dir+"/res")
 
 
 commands = []
-#HLT_bit = "HLT_Photon26_R9Id85_OR_CaloId10_Iso50_Photon18_R9Id85_OR_CaloId10_Iso50_Mass70_v2"
+HLT_bit = "HLT_Photon26_R9Id85_OR_CaloId10_Iso50_Photon18_R9Id85_OR_CaloId10_Iso50_Mass70_v2"
 #HLT_bit = "HLT_Photon36_R9Id85_OR_CaloId10_Iso50_Photon22_R9Id85_OR_CaloId10_Iso50_v6"
-HLT_bit = "HLT_Photon36_R9Id85_OR_CaloId10_Iso50_Photon10_R9Id85_OR_CaloId10_Iso50_Mass80_v1"
-mass = 80
+#HLT_bit = "HLT_Photon36_R9Id85_OR_CaloId10_Iso50_Photon10_R9Id85_OR_CaloId10_Iso50_Mass80_v1"
+mass = 100
 
 #generate the commands pathmaker_cmd and filter_cmd
-for px in range(pmin,pmax):
-	for py in range(pmin,px):
-		if [px,py] in finished_points: continue
+for px in range(pmin,pmax+1):
+	for py in range(p2min,p2max+1):
+		if [px,py] in finished_points: continue		
 
-		if abs(px-py) < max_splitting: continue 
-		
+		if py > px: continue
 
 		i_menu = hlt_name
 		o_menu = "hlt_%i_%i.py" % (px, py)
@@ -73,8 +77,11 @@ for px in range(pmin,pmax):
 		#path change for MASS70 trigger
 		#pathmaker_cmd = "python path_maker.py -i %s -o %s -p %s -c \"hltEG26EtFilter.etcutEB = cms.double( %i.0 )\" \"hltEG26EtFilter.etcutEE = cms.double( %i.0 )\" \"hltEG18EtDoubleFilterUnseeded.etcutEB = cms.double( %i.0 )\" \"hltEG18EtDoubleFilterUnseeded.etcutEE = cms.double( %i.0 )\" -r \"%s\"\n" % (i_menu, o_menu, HLT_bit, px, px, py, py, c_flag)
 
+		#path change for MASS70 -> Mass100 TRIGGER
+		pathmaker_cmd = "python path_maker.py -i %s -o %s -p %s -c \"hltEG26EtFilter.etcutEB = cms.double( %i.0 )\" \"hltEG26EtFilter.etcutEE = cms.double( %i.0 )\" \"hltEG18EtDoubleFilterUnseeded.etcutEB = cms.double( %i.0 )\" \"hltEG18EtDoubleFilterUnseeded.etcutEE = cms.double( %i.0 )\" \"hltPhoton26R9Id85ORCaloId10Iso50Photon18R9Id85ORCaloId10Iso50Mass70EgammaAllCombMassLastFilter.minMass = cms.double(100.0)\" -r \"%s\"\n" % (i_menu, o_menu, HLT_bit, px, px, py, py, c_flag)
+
 		#path change for MASS80 HI PT trigger
-		pathmaker_cmd = "python path_maker.py -i %s -o %s -p %s -c \"hltEG36EtFilter.etcutEB = cms.double( %i.0 )\" \"hltEG36EtFilter.etcutEE = cms.double( %i.0 )\" \"hltEG10EtDoubleFilterUnseeded.etcutEB = cms.double( %i.0 )\" \"hltEG10EtDoubleFilterUnseeded.etcutEE = cms.double( %i.0 )\" -r \"%s\"\n" % (i_menu, o_menu, HLT_bit, px, px, py, py, c_flag)
+		#pathmaker_cmd = "python path_maker.py -i %s -o %s -p %s -c \"hltEG36EtFilter.etcutEB = cms.double( %i.0 )\" \"hltEG36EtFilter.etcutEE = cms.double( %i.0 )\" \"hltEG10EtDoubleFilterUnseeded.etcutEB = cms.double( %i.0 )\" \"hltEG10EtDoubleFilterUnseeded.etcutEE = cms.double( %i.0 )\" -r \"%s\"\n" % (i_menu, o_menu, HLT_bit, px, px, py, py, c_flag)
 
 
 		prod_file = "/afs/cern.ch/work/h/hardenbr/2013/HIGGS_DIPHOTON_HLT/RUN_208390_2012D_hgg2012_threetriggers/res/ohlt_output_0.root"
@@ -90,7 +97,8 @@ for px in range(pmin,pmax):
 		tree_cmd = "python ~/josh_scripts/make_bit_tree.py %i %i %s %s %s %i %s \n" % (px, py, out_file, tree_file, HLT_bit, mass, new_bit_name)
 
 		#clean up the hlt files made, and unnecessary output file 
-		cleanup_cmd = "rm %s %sc %s %s\n" % (o_menu, o_menu, out_file, go_file)
+#		cleanup_cmd = "rm %s %sc %s %s\n" % (o_menu, o_menu, out_file, go_file)
+		cleanup_cmd = "rm %s %sc %s\n" % (o_menu, o_menu, go_file)
 
 		commands.append([pathmaker_cmd,filter_cmd,tree_cmd,cleanup_cmd])
 
